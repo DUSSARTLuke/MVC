@@ -43,4 +43,13 @@ class Repository {
     $lignes->setFetchMode(PDO::FETCH_CLASS, $this->classeNameLong, null);
     return $lignes->fetchAll();
   }
+  
+  public function find(int $id){
+    $sql = "select * from " .$this->table . "where id= :id";
+    $ligne = $this->connexion->uqery($sql);
+    $ligne->bindValue(':id', $id, PDO::PARAM_INT);
+    $ligne->execute();
+    return $ligne->fetchObject($this->classeNameLong);
+    return self::pdo_debugStrParams($ligne);
+  }
 }
