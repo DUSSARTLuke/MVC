@@ -1,0 +1,19 @@
+{
+    "name": "vendor/mon-petit-m-v-c",
+    "description": "Description of project MonPetitMVC.",
+    "authors": [
+        {
+            "name": "Nassim",
+            "email": "nassim.ahmedali@gmail.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "v2.4.6"
+    },
+    "autoload":{
+        "psr-4":{
+            "APP\\": "src",
+            "Tools\\": "includes"
+        }
+    }
+}
