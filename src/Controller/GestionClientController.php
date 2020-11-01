@@ -12,6 +12,7 @@ use APP\Model\GestionClientModel;
 use ReflectionClass;
 use Exception;
 use Tools\MyTwig;
+use Tools\Repository;
 
 /**
  * Description of GestionClientController
@@ -41,11 +42,13 @@ class GestionClientController {
 
   public function chercheTous() {
     // appel de la méthode findAll() de la classe Model adequate
-    $model = new GestionClientModel();
-    $clients = $model->FindAll();
+    $repository = Repository::getRepository("APP\Entity\Client");
+    $clients = $repository->FindAll();
     if ($clients) {
       $r = new ReflectionClass($this);
-      include_once PATH_VIEW . str_replace('Controller', 'View', $r->getShortName()) . "/plusieursClients.php";
+      $vue = str_replace('Controller', 'View', $r->getShortName()) . "/plsClients.html.twig";
+      MyTwig::afficheVue($vue, array('clients' => $clients));
+      //include_once PATH_VIEW . str_replace('Controller', 'View', $r->getShortName()) . "/plusieursClients.php";
     } else {
       throw new Exception("Aucun client à afficher");
     }
