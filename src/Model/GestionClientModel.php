@@ -47,4 +47,17 @@ class GestionClientModel
     $s->bindValue(':telCli', $client->getTelCli(), PDO::PARAM_STR);
     $s->execute();
   }
+  
+  public function findIds(){
+      $unObjetPdo = Connexion::getConnexion();
+      $sql = "select id from CLIENT";
+      $lignes = $unObjetPdo->query($sql);
+      // on va configurer le mode objet pour la lisibilité du code
+      if($lignes->rowCount() > 0){
+          $t = $lignes->fetchAll(PDO::FETCH_ASSOC);
+          return $t;
+      } else {
+          throw new Exception('Aucun client trouvé');
+      }
+  }
 }

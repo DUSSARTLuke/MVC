@@ -1,9 +1,11 @@
 <?php
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 namespace APP\Controller;
 
 use APP\Model\GestionClientModel;
@@ -16,26 +18,28 @@ use Tools\MyTwig;
  *
  * @author dussart.luke
  */
-class GestionClientController
-{
+class GestionClientController {
 
-  public function chercheUn(array $params): void
-  {
+  public function chercheUn(array $params): void {
     // appel de la méthode find($id) de la classe Model adequate 
     $model = new GestionClientModel();
-    $id = filter_var(intval($params['id']), FILTER_VALIDATE_INT);
-    $unClient = $model->find($id);
-    if ($unClient) {
-      $r = new ReflectionClass($this);
-      $vue = str_replace('Controller', 'View', $r->getShortName()) . "/unClient.html.twig";
-      MyTwig::afficheVue($vue, array('unClient' => $unClient));
-    } else {
-      throw new Exception("Client" . $id . " inconnu");
+    // dans tous les cas on récupère les ids des clients
+    $ids = $model->findIds();
+    // on place ces ids dans le tableau de paramètres que l'on va envoyer à la vue
+    $params['lesId'] = $ids;
+    // on teste si l'id du client à chercher a été passé dans l'URL
+    if (array_key_exists('id', $params)) {
+      $id = filter_var(intval($params['id']), FILTER_VALIDATE_INT);
+      $unClient = $model->find($id);
+      // on place le client trouvé dans le tableau de paramètres que l'on va envoyer à la vue
+      $params['unClient'] = $unClient;
     }
+    $r = new ReflectionClass($this);
+    $vue = str_replace('Controller', 'View', $r->getShortName()) . "/unClient.html.twig";
+    MyTwig::afficheVue($vue, $params);
   }
 
-  public function chercheTous()
-  {
+  public function chercheTous() {
     // appel de la méthode findAll() de la classe Model adequate
     $model = new GestionClientModel();
     $clients = $model->FindAll();
@@ -46,16 +50,17 @@ class GestionClientController
       throw new Exception("Aucun client à afficher");
     }
   }
-  
-  public function creerClient(array $params){
+
+  public function creerClient(array $params) {
     $vue = "GestionClientView\\creerClient.html.twig";
     MyTwig::afficheVue($vue, array());
   }
-  
-  public function enregistreClient(array $params){
+
+  public function enregistreClient(array $params) {
     // creation de l'objet Client
     $client = new Client($params);
     $modele = new GestionClientModel();
     $modele->enregistreClient($client);
   }
+
 }
