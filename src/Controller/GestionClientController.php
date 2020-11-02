@@ -74,4 +74,12 @@ class GestionClientController {
     $modele->enregistreClient($client);
   }
 
+  public function testFindBy($params){
+    $repository = Repository::getRepository("APP\Entity\Client");
+    $params = array("titreCli" => "Monsieur", "villeCli" => "Toulon");
+    $clients = $repository->findBytitreCli_and_villeCli($params);
+    $r = new ReflectionClass($this);
+    $vue = str_replace('Controller', 'View', $r->getShortName()) . "/tousClients.html.twig";
+    MyTwig::afficheVue($vue, array('clients' => $clients));
+  }
 }
