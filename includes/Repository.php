@@ -59,4 +59,28 @@ class Repository {
     $ids = $lignes->fetchAll(PDO::FETCH_ASSOC);
     return $ids;
   }
+  
+  public function insert($objet){
+    // conversion d'un objet en tableau
+    $attributs = (array) $objet;
+    array_shift($attributs);
+    $colonnes = "(";
+    $colonnesParams = array();
+    foreach ($attributs as $cle=> $valeur){
+      $cle = str_replace("\0", "", $cle);
+      $c = str_replace($this->classeNameLong, "", $cle);
+      $p = ":" . $c;
+      if($c != "id"){
+        $colonnes .= $c . " ,";
+        $colonnesParams .= " ? ,";
+        $parametres[] = $valeur;
+      }
+    }
+    $colonnes = substr($colonnes, 0, -1);
+    $colonnesParams = substr($colonnesParams, 0, -1);
+    $sql = "insert into " .$this->table . " " . $colonnes . ") values " . $colonnesParams . ")";
+    $unObjetPDO = Connexion::getConnexion();
+    $req = $unObjetPDO->prepare($sql);
+    $req->execute($parametres);
+  }
 }

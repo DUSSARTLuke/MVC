@@ -13,6 +13,7 @@ use ReflectionClass;
 use Exception;
 use Tools\MyTwig;
 use Tools\Repository;
+use APP\Entity\Client;
 
 /**
  * Description of GestionClientController
@@ -53,8 +54,17 @@ class GestionClientController {
   }
 
   public function creerClient(array $params) {
+    if(empty($params)){
     $vue = "GestionClientView\\creerClient.html.twig";
     MyTwig::afficheVue($vue, array());
+    } else {
+      // creation de l'objet client
+      $client = new Client($params);
+      $repository = Repository::getRepository("APP\Entity\Client");
+      $repository->insert($client);
+      $this->chercheTous();
+    }
+    
   }
 
   public function enregistreClient(array $params) {
