@@ -4,9 +4,9 @@
     {% block recherche %}
         <h3> Recherche </h3>
         <div class="container">
-            <form action="?c=GestionClient&a=chercheUn" method="post">
+            <form action="?c=GestionCommande&a=chercheUne" method="post">
                 <div class="form-group">
-                    <label for="Numéro du client"> Id du client</label>
+                    <label for="Numéro de la commande"> Id de la commande</label>
                     <select class="form-control" id="titre" name="id">
                         {% for id in lesId %}
                             <option>{{ id['id'] }}</option>
@@ -17,16 +17,12 @@
             </form>
         </div>
     {% endblock %}
-    {% if unClient %}
+    {% if unCommande %}
         {% block affiche %}
-    <p><h2> Informations du client numéro {{ unClient.getNoCli() }}</h2></p>
-<p>{{ unClient.getPrenomCli() }} {{ unClient.getNomCli() }}</p>
-<p> {{ unClient.getAdresseRue1Cli() }} </p>
-{% if unClient.getAdresseRue2Cli() %}
-    <p> {{ unClient.getAdresseRue2Cli() }}
-    {% endif %}
-<p> {{ unClient.getCpCli() }} {{ unClient.getVilleCli() }}</p>
-<p>{{ unClient.getTelCli() }}</p>
+    <p><h2> Informations de la commande numéro {{ unCommande.getId() }}</h2></p>
+<p>{{ unCommande.getIdClient() }}
+<p> {{ unCommande.getDateCde() }} </p>
+<p> {{ unCommande.getNoFacture() }}</p>
 {% endblock %}
 {% endif %}
 {% endblock %}

@@ -44,12 +44,19 @@ class Repository {
     return $lignes->fetchAll();
   }
   
-  public function find(int $id){
-    $sql = "select * from " .$this->table . "where id= :id";
-    $ligne = $this->connexion->uqery($sql);
+  public function find($id){
+    $sql = "select * from " . $this->table . " where id=:id";
+    $ligne = $this->connexion->prepare($sql);
     $ligne->bindValue(':id', $id, PDO::PARAM_INT);
     $ligne->execute();
     return $ligne->fetchObject($this->classeNameLong);
     return self::pdo_debugStrParams($ligne);
+  }
+  
+  public function findIds(){
+    $sql = "select id from ". $this->table;
+    $lignes = $this->connexion->query($sql);
+    $ids = $lignes->fetchAll(PDO::FETCH_ASSOC);
+    return $ids;
   }
 }

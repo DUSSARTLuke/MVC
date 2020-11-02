@@ -22,16 +22,14 @@ use Tools\Repository;
 class GestionClientController {
 
   public function chercheUn(array $params): void {
-    // appel de la méthode find($id) de la classe Model adequate 
-    $model = new GestionClientModel();
-    // dans tous les cas on récupère les ids des clients
-    $ids = $model->findIds();
+    $repository = Repository::getRepository("APP\Entity\Client");
+    $ids = $repository->findIds();
     // on place ces ids dans le tableau de paramètres que l'on va envoyer à la vue
     $params['lesId'] = $ids;
     // on teste si l'id du client à chercher a été passé dans l'URL
     if (array_key_exists('id', $params)) {
       $id = filter_var(intval($params['id']), FILTER_VALIDATE_INT);
-      $unClient = $model->find($id);
+      $unClient = $repository->find($id);
       // on place le client trouvé dans le tableau de paramètres que l'on va envoyer à la vue
       $params['unClient'] = $unClient;
     }
