@@ -62,11 +62,12 @@ class Repository {
   
   public function insert($objet){
     // conversion d'un objet en tableau
-    $attributs = (array) $objet;
+    $attributs = (array)$objet;
     array_shift($attributs);
     $colonnes = "(";
-    $colonnesParams = array();
-    foreach ($attributs as $cle=> $valeur){
+    $colonnesParams = "(";
+    $parametres = array();
+    foreach ($attributs as $cle => $valeur){
       $cle = str_replace("\0", "", $cle);
       $c = str_replace($this->classeNameLong, "", $cle);
       $p = ":" . $c;
