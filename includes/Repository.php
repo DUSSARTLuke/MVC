@@ -1,11 +1,9 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 namespace Tools;
 
 use Tools\Connexion;
@@ -16,35 +14,40 @@ use PDO;
  *
  * @author asus
  */
-class Repository {
-  
+class Repository
+{
+
   private $classeNameLong;
   private $classeNamespace;
   private $table;
   private $connexion;
-  
-  public function __construct(string $entity) {
+
+  public function __construct(string $entity)
+  {
     $tablo = explode("\\", $entity);
     $this->table = array_pop($tablo);
     $this->classeNamespace = implode("\\", $tablo);
     $this->classeNameLong = $entity;
     $this->connexion = Connexion::getConnexion();
   }
-  
-  public static function getRepository(string $entity){
+
+  public static function getRepository(string $entity)
+  {
     $repositoryName = str_replace('Entity', 'Repository', $entity) . 'Repository';
     $repository = new $repositoryName($entity);
     return $repository;
   }
-  
-  public function findAll(){
-    $sql = "select * from " .$this->table;
+
+  public function findAll()
+  {
+    $sql = "select * from " . $this->table;
     $lignes = $this->connexion->query($sql);
     $lignes->setFetchMode(PDO::FETCH_CLASS, $this->classeNameLong, null);
     return $lignes->fetchAll();
   }
-  
-  public function find($id){
+
+  public function find($id)
+  {
     $sql = "select * from " . $this->table . " where id=:id";
     $ligne = $this->connexion->prepare($sql);
     $ligne->bindValue(':id', $id, PDO::PARAM_INT);
@@ -52,26 +55,28 @@ class Repository {
     return $ligne->fetchObject($this->classeNameLong);
     return self::pdo_debugStrParams($ligne);
   }
-  
-  public function findIds(){
-    $sql = "select id from ". $this->table;
+
+  public function findIds()
+  {
+    $sql = "select id from " . $this->table;
     $lignes = $this->connexion->query($sql);
     $ids = $lignes->fetchAll(PDO::FETCH_ASSOC);
     return $ids;
   }
-  
-  public function insert($objet){
+
+  public function insert($objet)
+  {
     // conversion d'un objet en tableau
-    $attributs = (array)$objet;
+    $attributs = (array) $objet;
     array_shift($attributs);
     $colonnes = "(";
     $colonnesParams = "(";
     $parametres = array();
-    foreach ($attributs as $cle => $valeur){
+    foreach ($attributs as $cle => $valeur) {
       $cle = str_replace("\0", "", $cle);
       $c = str_replace($this->classeNameLong, "", $cle);
       $p = ":" . $c;
-      if($c != "id"){
+      if ($c != "id") {
         $colonnes .= $c . " ,";
         $colonnesParams .= " ? ,";
         $parametres[] = $valeur;
@@ -79,26 +84,28 @@ class Repository {
     }
     $colonnes = substr($colonnes, 0, -1);
     $colonnesParams = substr($colonnesParams, 0, -1);
-    $sql = "insert into " .$this->table . " " . $colonnes . ") values " . $colonnesParams . ")";
+    $sql = "insert into " . $this->table . " " . $colonnes . ") values " . $colonnesParams . ")";
     $unObjetPDO = Connexion::getConnexion();
     $req = $unObjetPDO->prepare($sql);
     $req->execute($parametres);
   }
-  
-  public function __call($methode, $params) {
-    if(preg_match("#^findBy#", $methode)){
+
+  public function __call($methode, $params)
+  {
+    if (preg_match("#^findBy#", $methode)) {
       return $this->traiteFindBy($methode, array_values($params[0]));
     }
   }
-  
-  public function traiteFindBy($methode, $params){
+
+  public function traiteFindBy($methode, $params)
+  {
     $criteres = str_replace("findBy", "", $methode);
     $criteres = explode("_and_", $criteres);
-    if(count($criteres) >0) {
+    if (count($criteres) > 0) {
       $sql = 'select * from ' . $this->table . " where ";
       $pasPremier = false;
-      foreach($criteres as $critere){
-        if($pasPremier){
+      foreach ($criteres as $critere) {
+        if ($pasPremier) {
           $sql .= ' and ';
         }
         $sql .= $critere . " = ? ";
@@ -109,5 +116,27 @@ class Repository {
       $lignes->setFetchMode(PDO::FETCH_CLASS, $this->classeNameLong, null);
       return $lignes->fetchAll();
     }
+  }
+  
+  public function findColumnDistinctValues($colonne){
+    $sql = "select distinct " . $colonne . " from " . $this->table . " order by 1";
+    $tab = $this->connexion->query($sql)->fetchAll(PDO::FETCH_COLUMN);
+    return $tab;
+  }
+  
+  public function findBy($params){
+    $element = "Choisir ...";
+    while(!in_array($element, $params)){
+      unset($params[array_search($element, $params)]);
+    }
+    $cles = array_keys($params);
+    $methode = "findBy";
+    for($i = 0; $i < count($cles); $i++){
+      if($i > 0){
+        $methode .= "_and_";
+      }
+      $methode .= $cles[$i];
+    }
+    return $this->traiteFindBy($methode, array_values($params));
   }
 }

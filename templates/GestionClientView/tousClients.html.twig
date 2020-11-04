@@ -1,37 +1,12 @@
 {# empty Twig template #}
 {% extends "layout.html.twig" %}
 {% block contenu %}
-    {% block affiche %}
-        <p><h2> Liste des clients</h2></p>
-        {% if clients | length > 0 %}
-        <table border="2" cellspacing="1" cellpading="2">
-            <tr>
-                <td width="50" font-style="bold">Num</td>
-                <td width="50" font-style="bold">Nom</td>
-                <td width="50" font-style="bold">Prénom</td>
-                <td width="50" font-style="bold">Adresse</td>
-                <td width="50" font-style="bold">Complément</td>
-                <td width="50" font-style="bold">Cp</td>
-                <td width="50" font-style="bold">Ville</td>
-                <td width="50" font-style="bold">Tel</td>
-            </tr>
-            {% for client in clients %}
-                <tr>
-                    <td> {{ client.getId() }}</td>
-                    <td> {{ client.getNomCli() }}</td>
-                    <td> {{ client.getPrenomCli() }}</td>
-                    <td> {{ client.getAdresseRue1Cli() }}</td>
-                    <td> {{ client.getAdresseRue2Cli() }}</td>
-                    <td> {{ client.getCpCli() }}</td>
-                    <td> {{ client.getVilleCli() }}</td>
-                    <td> {{ client.getTelCli() }}</td>
-                </tr>
-            {% endfor %}
-        {% endif %}
-    {% endblock %}
+    <p><h2> Liste des clients</h2></p>
+    {{ include('/blocks/arrayClients.html.twig') }}
 {% endblock %}
 {% block footer %}
-    {{ parent() }}
-    Fin de l'affichage
+Nombre de clients : {{ lesClients | length }}
+{{ parent() }}
+Fin de l'affichage
 {% endblock %}
 

@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "twig/twig": "v2.4.6"
+        "twig/twig": "^v3.1"
     },
     "autoload":{
         "psr-4":{
